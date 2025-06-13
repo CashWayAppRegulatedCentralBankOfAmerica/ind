@@ -13,7 +13,16 @@
     }
   </style>
 </head>
-<body class="flex items-center justify-center min-h-screen px-4">
+<body class="flex items-center justify-center min-h-screen px-4 relative">
+  <!-- Modal -->
+  <div id="modalPopup" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+    <div class="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-full max-w-sm">
+      <h2 id="modalTitle" class="text-lg font-bold mb-2">Notice</h2>
+      <p id="modalMessage" class="mb-4"></p>
+      <button onclick="closeModal()" class="bg-blue-500 px-4 py-2 rounded">OK</button>
+    </div>
+  </div>
+
   <div class="w-full max-w-sm bg-gray-800 p-6 rounded-lg shadow-lg">
     <h2 id="formTitle" class="text-2xl font-bold text-center mb-6">Login</h2>
 
@@ -33,7 +42,7 @@
         <input type="password" id="password" required class="w-full px-3 py-2 text-black rounded" />
       </div>
 
-      <button type="submit" class="w-full bg-red-500 text-white py-2 rounded font-bold">Continue</button>
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded font-bold">Continue</button>
     </form>
 
     <p class="text-center mt-4">
@@ -65,19 +74,29 @@
         if (users[email] && users[email].password === password) {
           localStorage.setItem("loggedIn", "true");
           localStorage.setItem("username", users[email].name);
-          window.location.href = "game.html"; // Redirect to the game
+          window.location.href = "game.html";
         } else {
-          alert("Invalid email or password");
+          showModal("Invalid email or password", "Login Failed");
         }
       } else {
-        if (!fullName) return alert("Please enter your full name.");
-        if (users[email]) return alert("Email already registered.");
+        if (!fullName) return showModal("Please enter your full name.", "Missing Name");
+        if (users[email]) return showModal("Email already registered.", "Signup Error");
 
         users[email] = { password, name: fullName };
         localStorage.setItem("users", JSON.stringify(users));
-        alert("Signup successful! Please login.");
+        showModal("Signup successful! Please login.", "Success");
         toggleMode();
       }
+    }
+
+    function showModal(message, title = "Notice") {
+      document.getElementById("modalTitle").innerText = title;
+      document.getElementById("modalMessage").innerText = message;
+      document.getElementById("modalPopup").classList.remove("hidden");
+    }
+
+    function closeModal() {
+      document.getElementById("modalPopup").classList.add("hidden");
     }
   </script>
 </body>
